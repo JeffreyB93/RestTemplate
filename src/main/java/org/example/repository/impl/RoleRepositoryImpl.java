@@ -92,8 +92,7 @@ public class RoleRepositoryImpl implements RoleRepository {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 Role role = roleResultSetMapper.map(resultSet);
-                Set<Role> roles = new HashSet<>();//Set.of(role)
-                //roles.add(role);
+                Set<Role> roles = new HashSet<>(Set.of(role));
                 while (resultSet.next())
                     roles.add(roleResultSetMapper.map(resultSet));
                 return roles;

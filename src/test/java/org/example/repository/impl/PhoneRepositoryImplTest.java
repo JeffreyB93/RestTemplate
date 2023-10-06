@@ -2,21 +2,19 @@ package org.example.repository.impl;
 
 import org.example.db.Impl.ConnectionManagerImpl;
 import org.example.model.Phone;
-import org.example.model.Role;
-import org.example.model.User;
+import org.example.repository.PhoneRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
-class UserEntityRepositoryImplTest {
+class PhoneRepositoryImplTest {
 
-    UserRepositoryImpl userRepository = new UserRepositoryImpl();
+    private PhoneRepository phoneRepository = new PhoneRepositoryImpl();
 
     @Container
     public static final PostgreSQLContainer<?> container =
@@ -36,23 +34,24 @@ class UserEntityRepositoryImplTest {
 
     @Test
     void findById_1() {
-        User user = userRepository.findById(1L);
-        Assertions.assertEquals(1L, user.getId());
+        Long expected = 2L;
+        Long actual = phoneRepository.findById(expected).getPhoneId();
+        Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void findById_null() {
-        Assertions.assertNull(userRepository.findById(100L));
+        Assertions.assertNull(phoneRepository.findById(100L).getPhoneId());
     }
 
     @Test
     void deleteById_true() {
-        Assertions.assertTrue(userRepository.deleteById(2L));
+        Assertions.assertTrue(phoneRepository.deleteById(1L));
     }
 
     @Test
     void deleteById_false() {
-        Assertions.assertFalse(userRepository.deleteById(300L));
+        Assertions.assertFalse(phoneRepository.deleteById(300L));
     }
 
     @Test
@@ -73,42 +72,23 @@ class UserEntityRepositoryImplTest {
         phone4.setPhoneId(4L);
         phone4.setPhoneNumber("273874");
 
-        Role role1 = new Role();
-        role1.setId(1L);
-        role1.setRoleName("Админ");
+        Set<Phone> expected = new HashSet<>();
+        expected.add(phone1);
+        expected.add(phone2);
+        expected.add(phone3);
+        expected.add(phone4);
 
-        Role role2 = new Role();
-        role2.setId(2L);
-        role2.setRoleName("Клиент");
-
-        User user1 = new User();
-        user1.setId(1L);
-        user1.setName("Коля");
-        user1.setRoles(Set.of(role1, role2));
-        user1.setPhones(Set.of(phone1, phone2));
-
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("Катя");
-        user2.setRoles(Set.of(role1));
-        user2.setPhones(Set.of(phone3));
-
-        User user3 = new User();
-        user3.setId(3L);
-        user3.setName("Виталик");
-        user3.setRoles(Set.of(role2));
-        user3.setPhones(Set.of(phone4));
-
-        ArrayList<User> expected = new ArrayList<>(List.of(user1, user2, user3));
-        ArrayList<User> users = userRepository.findAll();
-        Assertions.assertEquals(expected, users);
+        Set<Phone> phones = phoneRepository.findAll();
+        Assertions.assertEquals(expected, phones);
     }
 
     @Test
     void save() {
-        User expected = new User();
-        expected.setId(10L);
-        expected.setName("Боря");
-        Assertions.assertEquals(expected, userRepository.save(expected));
+        Phone expected = new Phone();
+        expected.setPhoneId(1L);
+        expected.setPhoneNumber("22222");
+
+        Phone phone = phoneRepository.save(expected);
+        Assertions.assertEquals(expected, phone);
     }
 }

@@ -59,7 +59,7 @@ class UserServiceImplTest {
         User user2 = new User();
         user2.setId(2L);
         user2.setName("Катя");
-        ArrayList<User> users = new ArrayList<User>(List.of(user1, user2));
+        ArrayList<User> users = new ArrayList<>(List.of(user1, user2));
 
         Mockito.when(userRepository.findAll()).thenReturn(users);
         Assertions.assertEquals(users, userService.findAll());

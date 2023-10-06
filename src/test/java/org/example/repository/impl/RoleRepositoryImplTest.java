@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
-class RoleEntityRepositoryImplTest {
+class RoleRepositoryImplTest {
 
     RoleRepository roleRepository = new RoleRepositoryImpl();
 

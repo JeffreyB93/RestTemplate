@@ -1,6 +1,6 @@
 package org.example.repository;
 
-public interface EntityRepository<T, K> {
+public interface Repository<T, K> {
     T findById(K id);
 
     boolean deleteById(K id);

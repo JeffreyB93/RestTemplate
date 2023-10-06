@@ -11,22 +11,22 @@ public class UserServiceImpl implements UserService {
     private UserRepositoryImpl userRepository = new UserRepositoryImpl();
 
     @Override
-    public User findById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    @Override
-    public boolean deleteById(Long id) {
-        return userRepository.deleteById(id);
-    }
-
-    @Override
     public User save(User user) {
         return userRepository.save(user);
     }
 
     @Override
+    public User findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
     public ArrayList<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Override
+    public boolean deleteById(Long id) {
+        return userRepository.deleteById(id);
     }
 }
