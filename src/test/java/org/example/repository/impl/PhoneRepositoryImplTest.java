@@ -1,42 +1,56 @@
 package org.example.repository.impl;
 
-import org.example.db.Impl.ConnectionManagerImpl;
 import org.example.model.Phone;
 import org.example.repository.PhoneRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Properties;
 
 class PhoneRepositoryImplTest {
-
+    @InjectMocks
     private PhoneRepository phoneRepository = new PhoneRepositoryImpl();
 
     @Container
-    public static final PostgreSQLContainer<?> container =
+    public static PostgreSQLContainer<?> container =
             new PostgreSQLContainer<>("postgres:15")
                     .withDatabaseName("postgres")
                     .withUsername("test")
                     .withInitScript("db-migration.SQL")
                     .withPassword("test");
 
+
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         container.start();
-        ConnectionManagerImpl.setDbUrl(container.getJdbcUrl());
-        ConnectionManagerImpl.setBdUserName(container.getUsername());
-        ConnectionManagerImpl.setBdPassword(container.getPassword());
+        FileInputStream fis = new FileInputStream("src/main/resources/db.properties");
+        Properties property = new Properties();
+        property.load(fis);
+        fis.close();
+        property.setProperty("url", container.getJdbcUrl());
+        property.setProperty("username", container.getUsername());
+        property.setProperty("password", container.getPassword());
+
+        FileOutputStream output = new FileOutputStream("src/main/resources/db.properties");
+        property.store(output, "");
+        output.close();
     }
+
 
     @Test
     void findById_1() {
-        Long expected = 2L;
-        Long actual = phoneRepository.findById(expected).getPhoneId();
-        Assertions.assertEquals(expected, actual);
+        String actual = phoneRepository.findById(2L).getPhoneNumber();
+        Assertions.assertEquals("5779757", actual);
     }
 
     @Test

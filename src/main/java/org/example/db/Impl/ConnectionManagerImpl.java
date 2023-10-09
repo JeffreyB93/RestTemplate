@@ -2,18 +2,24 @@ package org.example.db.Impl;
 
 import org.example.db.ConnectionManager;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public class ConnectionManagerImpl implements ConnectionManager {
 
-    private final String DB_DRIVER = "org.postgresql.Driver";
-    private static String dbUrl = "jdbc:postgresql://localhost:5432/postgres";
-    private static String bdUserName = "habrpguser";
-    private static String bdPassword = "pgpwd4habr";
+    private static String bdDriver;
+    private static String dbUrl;
+    private static String bdUserName;
+    private static String bdPassword;
+    static FileInputStream fis;
+    static Properties property = new Properties();
 
-    public static String getDbUrl() {
+    public String getDbUrl() {
         return dbUrl;
     }
 
@@ -21,7 +27,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
         ConnectionManagerImpl.dbUrl = dbUrl;
     }
 
-    public static String getBdUserName() {
+    public String getBdUserName() {
         return bdUserName;
     }
 
@@ -29,7 +35,7 @@ public class ConnectionManagerImpl implements ConnectionManager {
         ConnectionManagerImpl.bdUserName = bdUserName;
     }
 
-    public static String getBdPassword() {
+    public String getBdPassword() {
         return bdPassword;
     }
 
@@ -40,12 +46,22 @@ public class ConnectionManagerImpl implements ConnectionManager {
     public Connection getConnection() {
         Connection connection = null;
         try {
-            Class.forName(DB_DRIVER);
+            fis = new FileInputStream("src/main/resources/db.properties");
+            property.load(fis);
+
+            bdDriver = property.getProperty("driver");
+            dbUrl = property.getProperty("url");
+            bdUserName = property.getProperty("username");
+            bdPassword = property.getProperty("password");
+            Class.forName(bdDriver);
             connection = DriverManager.getConnection(dbUrl, bdUserName, bdPassword);
             System.out.println("Connection OK");
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
             System.out.println("Connection ERROR");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return connection;
     }

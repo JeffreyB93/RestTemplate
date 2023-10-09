@@ -10,8 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 class UserRepositoryImplTest {
@@ -27,11 +31,19 @@ class UserRepositoryImplTest {
                     .withPassword("test");
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         container.start();
-        ConnectionManagerImpl.setDbUrl(container.getJdbcUrl());
-        ConnectionManagerImpl.setBdUserName(container.getUsername());
-        ConnectionManagerImpl.setBdPassword(container.getPassword());
+        FileInputStream fis = new FileInputStream("src/main/resources/db.properties");
+        Properties property = new Properties();
+        property.load(fis);
+        fis.close();
+        property.setProperty("url", container.getJdbcUrl());
+        property.setProperty("username", container.getUsername());
+        property.setProperty("password", container.getPassword());
+
+        FileOutputStream output = new FileOutputStream("src/main/resources/db.properties");
+        property.store(output, "");
+        output.close();
     }
 
     @Test

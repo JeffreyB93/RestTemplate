@@ -1,6 +1,5 @@
 package org.example.repository.impl;
 
-import org.example.db.Impl.ConnectionManagerImpl;
 import org.example.model.Role;
 import org.example.repository.RoleRepository;
 import org.junit.jupiter.api.Assertions;
@@ -9,8 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 class RoleRepositoryImplTest {
@@ -26,11 +30,19 @@ class RoleRepositoryImplTest {
                     .withPassword("test");
 
     @BeforeAll
-    public static void setUp() {
+    public static void setUp() throws IOException {
         container.start();
-        ConnectionManagerImpl.setDbUrl(container.getJdbcUrl());
-        ConnectionManagerImpl.setBdUserName(container.getUsername());
-        ConnectionManagerImpl.setBdPassword(container.getPassword());
+        FileInputStream fis = new FileInputStream("src/main/resources/db.properties");
+        Properties property = new Properties();
+        property.load(fis);
+        fis.close();
+        property.setProperty("url", container.getJdbcUrl());
+        property.setProperty("username", container.getUsername());
+        property.setProperty("password", container.getPassword());
+
+        FileOutputStream output = new FileOutputStream("src/main/resources/db.properties");
+        property.store(output, "");
+        output.close();
     }
 
     @Test

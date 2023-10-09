@@ -26,6 +26,7 @@ public class PhoneRepositoryImpl implements PhoneRepository {
 
         try {
             Connection connection = connectionManager.getConnection();
+            //System.out.println(connection.getAutoCommit());
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
