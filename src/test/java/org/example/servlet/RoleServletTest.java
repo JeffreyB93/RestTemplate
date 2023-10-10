@@ -43,14 +43,10 @@ class RoleServletTest {
         user1.setId(1L);
         user1.setName("Коля");
 
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setName("Катя");
-
         Role role = new Role();
         role.setId(1L);
         role.setRoleName("111");
-        role.setUsers(Set.of(user1, user2));
+        role.setUsers(Set.of(user1));
 
 
         Mockito.when(roleService.findById(1L)).thenReturn(role);
@@ -59,7 +55,7 @@ class RoleServletTest {
 
         Mockito.verify(response).setContentType("application/json");
         Mockito.verify(response).setStatus(200);
-        Mockito.verify(writer).write("{\"roleName\":\"111\",\"usersDto\":[{\"name\":\"Коля\",\"phonesDto\":null,\"rolesDto\":null},{\"name\":\"Катя\",\"phonesDto\":null,\"rolesDto\":null}]}");
+        Mockito.verify(writer).write("{\"roleName\":\"111\",\"usersDto\":[{\"name\":\"Коля\",\"phonesDto\":null,\"rolesDto\":null}]}");
     }
 
     @Test
@@ -77,12 +73,12 @@ class RoleServletTest {
 
         Role role1 = new Role();
         role1.setId(1L);
-        role1.setRoleName("111");
+        role1.setRoleName("Админ");
         role1.setUsers(Set.of(user1));
 
         Role role2 = new Role();
         role2.setId(1L);
-        role2.setRoleName("111");
+        role2.setRoleName("Клиент");
         role2.setUsers(Set.of(user2));
 
         Set<Role> roles = Set.of(role1, role2);
@@ -93,7 +89,7 @@ class RoleServletTest {
 
         Mockito.verify(response).setContentType("application/json");
         Mockito.verify(response).setStatus(200);
-        Mockito.verify(writer).write("[{\"roleName\":\"111\",\"usersDto\":[{\"name\":\"Катя\",\"phonesDto\":null,\"rolesDto\":null}]},{\"roleName\":\"111\",\"usersDto\":[{\"name\":\"Коля\",\"phonesDto\":null,\"rolesDto\":null}]}]");
+        Mockito.verify(writer).write("[{\"roleName\":\"Админ\",\"usersDto\":[{\"name\":\"Коля\",\"phonesDto\":null,\"rolesDto\":null}]},{\"roleName\":\"Клиент\",\"usersDto\":[{\"name\":\"Катя\",\"phonesDto\":null,\"rolesDto\":null}]}]");
     }
 
     @Test
